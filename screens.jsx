@@ -20,18 +20,18 @@ function FormaBadge({ level = "boa" }) {
       style={{
         display: "inline-flex",
         alignItems: "center",
-        gap: 8,
-        padding: "6px 12px",
+        gap: 10,
+        padding: "8px 14px",
         borderRadius: 999,
         background: `color-mix(in oklab, ${cfg.color} 14%, var(--surface-1))`,
         border: `1px solid color-mix(in oklab, ${cfg.color} 36%, transparent)`,
         transition: "all var(--d-med) var(--ease-out)",
       }}
     >
-      <div style={{ display: "flex", gap: 3 }}>
+      <div style={{ display: "flex", gap: 4 }}>
         {[0, 1, 2].map((i) => (
           <span key={i} style={{
-            width: 7, height: 7, borderRadius: 999,
+            width: 9, height: 9, borderRadius: 999,
             background: i < cfg.dots ? cfg.color : "color-mix(in oklab, var(--text-muted) 40%, transparent)",
             boxShadow: i < cfg.dots ? `0 0 6px ${cfg.color}` : "none",
             transition: "all var(--d-med) var(--ease-out)",
@@ -39,8 +39,8 @@ function FormaBadge({ level = "boa" }) {
         ))}
       </div>
       <span style={{
-        fontSize: 11,
-        fontWeight: 700,
+        fontSize: 14,
+        fontWeight: 800,
         letterSpacing: 0.4,
         textTransform: "uppercase",
         color: cfg.color,
@@ -138,7 +138,7 @@ function LoginScreen({ onLogin }) {
           <div className="rfid__core"><I.Rfid /></div>
         </div>
 
-        <div style={{ textAlign: "center", color: "var(--text-secondary)", fontSize: 14, fontWeight: 600, lineHeight: 1.4, maxWidth: 320 }}>
+        <div style={{ textAlign: "center", color: "var(--text-secondary)", fontSize: 19, fontWeight: 600, lineHeight: 1.35, maxWidth: 360 }}>
           Aproxime a pulseira da área indicada na recepção
         </div>
       </div>
@@ -174,10 +174,10 @@ function PrincipalScreen({ user, onStart }) {
           marginTop: 14,
         }}>
           <button onClick={onStart} style={{
-            background: "linear-gradient(160deg, var(--surface-2) 0%, var(--surface-1) 100%)",
-            border: "1px solid var(--border)",
+            background: "linear-gradient(160deg, var(--accent-green) 0%, color-mix(in oklab, var(--accent-green) 75%, #000) 100%)",
+            border: "none",
             borderRadius: "var(--r-card)",
-            padding: "16px",
+            padding: "14px",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -185,38 +185,58 @@ function PrincipalScreen({ user, onStart }) {
             textAlign: "left",
             cursor: "pointer",
             transition: "all var(--d-fast) var(--ease-out)",
+            color: "#00200E",
+            boxShadow: "0 8px 22px -10px var(--accent-green), inset 0 1px 0 rgba(255,255,255,0.2)",
+            position: "relative",
+            overflow: "hidden",
+            gap: 6,
           }}
           onMouseDown={(e) => e.currentTarget.style.transform = "scale(.98)"}
           onMouseUp={(e) => e.currentTarget.style.transform = ""}
           onMouseLeave={(e) => e.currentTarget.style.transform = ""}
           >
-            <div style={{ width: 44, height: 44, borderRadius: 12, background: "color-mix(in oklab, var(--accent-green) 22%, var(--surface-3))", color: "var(--accent-green)", display: "grid", placeItems: "center" }}>
+            <div style={{ width: 40, height: 40, borderRadius: 11, background: "rgba(0, 32, 14, 0.22)", color: "#00200E", display: "grid", placeItems: "center" }}>
               <I.Dumbbell style={{ width: 24, height: 24 }} />
             </div>
             <div>
-              <div className="eyebrow" style={{ textAlign: "left", marginBottom: 4 }}>Hoje</div>
-              <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.6 }}>Iniciar Treino</div>
+              <div style={{
+                fontSize: 11,
+                fontWeight: 800,
+                letterSpacing: 1.2,
+                textTransform: "uppercase",
+                opacity: 0.7,
+                marginBottom: 2,
+              }}>Hoje</div>
+              <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.6, lineHeight: 1, whiteSpace: "nowrap" }}>Iniciar Treino</div>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, color: "var(--accent-green)", fontSize: 13, fontWeight: 700 }}>
-              4 exercícios <I.ArrowRight style={{ width: 14, height: 14 }} />
+            <div style={{
+              display: "flex", alignItems: "center", gap: 6,
+              fontSize: 12, fontWeight: 800, letterSpacing: 0.6, textTransform: "uppercase",
+              background: "rgba(0, 32, 14, 0.22)",
+              padding: "5px 10px",
+              borderRadius: 999,
+              alignSelf: "flex-start",
+              whiteSpace: "nowrap",
+            }}>
+              4 exercícios <I.ArrowRight style={{ width: 12, height: 12 }} />
             </div>
           </button>
 
           <div className="col" style={{ gap: 12 }}>
             <div className="card" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "12px 14px", minHeight: 84 }}>
               <div className="eyebrow" style={{ textAlign: "left", display: "flex", alignItems: "center", gap: 6 }}>
-                <I.Target style={{ width: 12, height: 12 }} /> Objetivo
+                <I.Target style={{ width: 14, height: 14 }} /> Objetivo
               </div>
-              <div style={{ fontSize: 16, fontWeight: 800, letterSpacing: -0.3 }}>Crescimento</div>
+              <div style={{ fontSize: 18, fontWeight: 800, letterSpacing: -0.3 }}>Crescimento</div>
             </div>
 
             <div className="card" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "12px 14px", minHeight: 84, background: "color-mix(in oklab, var(--accent-amber) 10%, var(--surface-1))", borderColor: "color-mix(in oklab, var(--accent-amber) 28%, transparent)" }}>
               <div className="eyebrow" style={{ textAlign: "left", display: "flex", alignItems: "center", gap: 6, color: "var(--accent-amber)" }}>
-                <I.Sparkles style={{ width: 12, height: 12 }} /> Sequência
+                <I.Sparkles style={{ width: 14, height: 14 }} /> Sequência
               </div>
               <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
-                <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.5, color: "var(--accent-amber)" }}>7</span>
-                <span style={{ fontSize: 11, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.4 }}>dias</span>
+                <span style={{ fontSize: 24, fontWeight: 800, letterSpacing: -0.5, color: "var(--accent-amber)" }}>7</span>
+                <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: 0.4 }}>dias</span>
               </div>
             </div>
           </div>
@@ -238,7 +258,7 @@ function FichaScreen({ exercises, onPick, onBack }) {
     <div className="screen-wrap">
       <StatusBar status="idle" />
       <div className="page">
-        <PageHeader title="Treino" subtitle={`${done}/${total} concluídos · ${totalMin} min`} onBack={onBack} />
+        <PageHeader title="Treino" onBack={onBack} />
         <div className="scroll col" style={{ gap: 8 }}>
           {exercises.map((ex, i) => (
             <div
@@ -247,7 +267,7 @@ function FichaScreen({ exercises, onPick, onBack }) {
               onClick={() => onPick(i)}
               role="button"
             >
-              <span className="list-row__time">{ex.minutes}<small style={{ fontSize: 11, opacity: 0.6 }}>min</small></span>
+              <span className="list-row__time">{ex.minutes}<small style={{ fontSize: 13, opacity: 0.7, marginLeft: 2 }}>min</small></span>
               <span className="list-row__name">{ex.name}</span>
               <span className={`check ${ex.done ? "check--done" : ""}`}><I.Check /></span>
             </div>
@@ -266,34 +286,43 @@ function ExercicioScreen({ exercise, onStart, onCancel, onBack, completed = fals
     <div className="screen-wrap">
       <StatusBar status="idle" />
       <div className="page">
-        <PageHeader title={exercise.name} subtitle={completed ? "Concluído" : "Próximo exercício"} onBack={onBack} />
+        <PageHeader title={exercise.name} onBack={onBack} />
         <div className="col" style={{ gap: 10, flex: 1 }}>
-          <div className="card card--raised" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 18px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <I.Clock style={{ width: 20, height: 20, color: "var(--text-muted)" }} />
-              <span style={{ fontWeight: 700, fontSize: 18 }}>Duração</span>
+          {completed ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "2px 4px 0" }}>
+              <I.Clock style={{ width: 16, height: 16, color: "var(--text-muted)" }} />
+              <span style={{ fontSize: 16, fontWeight: 700, color: "var(--text-secondary)" }}>
+                <span style={{ fontFamily: "var(--font-mono)", color: "var(--text-primary)" }}>{exercise.minutes}</span> min
+              </span>
             </div>
-            <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
-              <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 26, letterSpacing: -0.4 }}>{exercise.minutes}</span>
-              <span className="eyebrow">min</span>
+          ) : (
+            <div className="card card--raised" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 18px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <I.Clock style={{ width: 20, height: 20, color: "var(--text-muted)" }} />
+                <span style={{ fontWeight: 700, fontSize: 18 }}>Duração</span>
+              </div>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
+                <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 26, letterSpacing: -0.4 }}>{exercise.minutes}</span>
+                <span className="eyebrow">min</span>
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className="card card--raised grow" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div className="card card--raised grow" style={{ display: "flex", flexDirection: "column", gap: 8, minHeight: 0, overflow: "hidden" }}>
             <div className="eyebrow" style={{ textAlign: "left" }}>Descrição</div>
-            <div style={{ fontSize: 17, lineHeight: 1.4, color: "var(--text-secondary)", fontWeight: 500 }}>
+            <div className="scroll" style={{ fontSize: 19, lineHeight: 1.4, color: "var(--text-secondary)", fontWeight: 500, paddingRight: 4 }}>
               {exercise.description}
             </div>
           </div>
 
-          <div className="row" style={{ marginTop: 4, justifyContent: completed ? "center" : "space-between" }}>
+          <div className="row" style={{ marginTop: 2, marginBottom: 4, justifyContent: completed ? "center" : "space-between", flexShrink: 0 }}>
             {completed ? (
-              <button className="btn btn--ghost" onClick={onBack}>
+              <button className="btn btn--secondary" onClick={onBack}>
                 <I.ChevronLeft style={{ width: 16, height: 16 }} /> Voltar
               </button>
             ) : (
               <>
-                <button className="btn btn--danger" onClick={onCancel}>Cancelar</button>
+                <button className="btn btn--neutral" onClick={onCancel}>Cancelar</button>
                 <button className="btn btn--primary" onClick={onStart}>
                   Começar <I.Play style={{ width: 14, height: 14 }} />
                 </button>
@@ -327,21 +356,16 @@ function AtividadeScreen({ exercise, hr, secondsLeft, totalSeconds, forma = "boa
           display: "grid",
           gridTemplateColumns: "auto 1fr auto auto",
           alignItems: "center",
-          gap: 10,
-          padding: "6px 4px 2px",
+          gap: 12,
+          padding: "4px 4px 0",
         }}>
-          <div style={{ minWidth: 0 }}>
-            <div className="eyebrow" style={{ textAlign: "left", marginBottom: 2, whiteSpace: "nowrap" }}>Exercício</div>
-            <div style={{
-              fontSize: 22,
-              fontWeight: 800,
-              letterSpacing: -0.5,
-              lineHeight: 1.05,
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}>{exercise.name}</div>
-          </div>
+          <div style={{
+            fontSize: 26,
+            fontWeight: 800,
+            letterSpacing: -0.5,
+            lineHeight: 1,
+            whiteSpace: "nowrap",
+          }}>{exercise.name}</div>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <FormaBadge level={forma} />
           </div>
@@ -365,8 +389,8 @@ function AtividadeScreen({ exercise, hr, secondsLeft, totalSeconds, forma = "boa
             background: "color-mix(in oklab, var(--hr-color) 14%, var(--surface-1))",
             border: "1px solid color-mix(in oklab, var(--hr-color) 32%, transparent)",
           }}>
-            <I.Heart style={{ width: 14, height: 14, color: "var(--hr-color)", animation: "heartbeat 1.1s infinite var(--ease-in-out)" }} />
-            <span style={{ fontSize: 16, fontWeight: 800, color: "var(--hr-color)", letterSpacing: -0.3 }}>{hr}</span>
+            <I.Heart style={{ width: 16, height: 16, color: "var(--hr-color)", animation: "heartbeat 1.1s infinite var(--ease-in-out)" }} />
+            <span style={{ fontSize: 18, fontWeight: 800, color: "var(--hr-color)", letterSpacing: -0.3 }}>{hr}</span>
           </div>
         </div>
 
@@ -401,25 +425,25 @@ function AtividadeScreen({ exercise, hr, secondsLeft, totalSeconds, forma = "boa
             display: "flex",
             alignItems: "center",
             gap: 8,
-            padding: "6px 12px",
+            padding: "7px 13px",
             borderRadius: 999,
-            background: "rgba(0,0,0,0.65)",
+            background: "rgba(0,0,0,0.75)",
             backdropFilter: "blur(8px)",
             color: "white",
             fontFamily: "var(--font-action)",
             fontWeight: 700,
-            fontSize: 12,
+            fontSize: 13,
             letterSpacing: 0.6,
             textTransform: "uppercase",
             whiteSpace: "nowrap",
           }}>
-            <I.Play style={{ width: 12, height: 12 }} /> Ampliar
+            <I.Play style={{ width: 13, height: 13 }} /> Ampliar
           </div>
         </button>
 
-        {/* Big terminar button */}
-        <button className="btn btn--danger btn--xl" onClick={onTerminate} style={{ width: "100%" }}>
-          <I.Stop style={{ width: 18, height: 18 }} /> Terminar Treino
+        {/* Smaller terminar button */}
+        <button className="btn btn--neutral" onClick={onTerminate} style={{ alignSelf: "center" }}>
+          <I.Stop style={{ width: 16, height: 16 }} /> Terminar Treino
         </button>
       </div>
 
@@ -444,7 +468,7 @@ function AtividadeScreen({ exercise, hr, secondsLeft, totalSeconds, forma = "boa
           <div className="exercise-illustration" style={{ minHeight: 0 }}>
             <img src="assets/body.png" alt={exercise.name} />
           </div>
-          <div style={{ textAlign: "center", fontSize: 13, color: "var(--text-muted)", marginTop: 8 }}>
+          <div style={{ textAlign: "center", fontSize: 15, color: "var(--text-secondary)", marginTop: 10, fontWeight: 500 }}>
             Toque em qualquer lugar para fechar
           </div>
         </div>
@@ -475,8 +499,8 @@ function EncorajamentoScreen({ user, exercise, hr, secondsLeft, totalSeconds, on
           <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--accent-green)" }}>
             <I.Sparkles style={{ width: 20, height: 20 }} />
             <span style={{
-              fontSize: 12,
-              fontWeight: 700,
+              fontSize: 14,
+              fontWeight: 800,
               textTransform: "uppercase",
               letterSpacing: 1.5,
             }}>Você está indo bem</span>
@@ -552,27 +576,28 @@ function FalhaScreen({ exercise, secondsLeft, onRetry, onBack }) {
 
   return (
     <div className="screen-wrap">
-      <StatusBar status="alert" />
+      <StatusBar status="idle" pillOverride="Interrompido" />
       <div className="page" style={{ alignItems: "center", justifyContent: "space-between", paddingTop: 8 }}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, marginTop: 14 }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12, marginTop: 14 }}>
           <div style={{
-            width: 56, height: 56,
-            borderRadius: 16,
+            width: 64, height: 64,
+            borderRadius: 18,
             display: "grid", placeItems: "center",
-            background: "color-mix(in oklab, var(--accent-red) 18%, var(--surface-1))",
-            color: "var(--accent-red)",
+            background: "var(--surface-2)",
+            color: "var(--text-secondary)",
+            border: "1.5px solid var(--border-strong)",
           }}>
-            <I.AlertTriangle style={{ width: 32, height: 32 }} />
+            <I.Pause style={{ width: 30, height: 30 }} />
           </div>
-          <div className="hero-sub" style={{ fontSize: 26 }}>Não concluído</div>
-          <div style={{ fontSize: 13, color: "var(--text-muted)", textAlign: "center", maxWidth: 320 }}>
-            Você interrompeu <strong style={{ color: "var(--text-secondary)" }}>{exercise.name}</strong>. Sem problema — tente novamente quando estiver pronto.
+          <div className="hero-sub" style={{ fontSize: 32, color: "var(--text-primary)" }}>Treino pausado</div>
+          <div style={{ fontSize: 17, color: "var(--text-secondary)", textAlign: "center", maxWidth: 340, lineHeight: 1.4, fontWeight: 500 }}>
+            Você interrompeu <strong style={{ color: "var(--text-primary)" }}>{exercise.name}</strong>. Retome quando estiver pronto.
           </div>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, width: "100%" }}>
-          <div className="metric"><span className="metric__label">Restante</span><span className="metric__value metric__value--mono" style={{ fontSize: 22 }}>{mm}:{ss}</span></div>
-          <div className="metric"><span className="metric__label">Próximo passo</span><span className="metric__value" style={{ fontSize: 16, color: "var(--accent-amber)" }}>Descansar</span></div>
+          <div className="metric"><span className="metric__label">Restante</span><span className="metric__value metric__value--mono" style={{ fontSize: 24 }}>{mm}:{ss}</span></div>
+          <div className="metric"><span className="metric__label">Sugestão</span><span className="metric__value" style={{ fontSize: 18, color: "var(--accent-amber)" }}>Descansar</span></div>
         </div>
 
         <div className="row" style={{ width: "100%", justifyContent: "space-between", marginTop: 4 }}>
@@ -615,18 +640,18 @@ function InstrutorScreen({ user, onCancel }) {
           <div className="hero hero--amber" style={{ fontSize: 48 }}>AGUARDE</div>
           <div style={{ textAlign: "center" }}>
             <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.4 }}>{user.name}</div>
-            <div style={{ fontSize: 14, color: "var(--text-secondary)", marginTop: 4 }}>
+            <div style={{ fontSize: 16, color: "var(--text-secondary)", marginTop: 4, fontWeight: 500 }}>
               O instrutor foi acionado
             </div>
           </div>
         </div>
 
-        <div className="card" style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "10px 14px" }}>
-          <div style={{ width: 6, height: 6, borderRadius: 50, background: "var(--accent-amber)", boxShadow: "0 0 8px var(--accent-amber)" }} />
-          <div style={{ flex: 1, fontSize: 12, color: "var(--text-secondary)" }}>
-            Tempo médio de resposta: <strong style={{ color: "var(--text-primary)" }}>~2 min</strong>
+        <div className="card" style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "12px 14px" }}>
+          <div style={{ width: 8, height: 8, borderRadius: 50, background: "var(--accent-amber)", boxShadow: "0 0 8px var(--accent-amber)" }} />
+          <div style={{ flex: 1, fontSize: 14, color: "var(--text-secondary)", fontWeight: 500 }}>
+            Tempo médio: <strong style={{ color: "var(--text-primary)" }}>~2 min</strong>
           </div>
-          <button className="btn btn--sm btn--secondary" onClick={onCancel}>Cancelar</button>
+          <button className="btn btn--sm btn--neutral" onClick={onCancel}>Cancelar</button>
         </div>
       </div>
     </div>
@@ -665,7 +690,7 @@ function EmergenciaScreen({ user, onCancel }) {
 
           <div style={{ textAlign: "center" }}>
             <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.4 }}>{user.name}</div>
-            <div style={{ fontSize: 14, color: "var(--text-secondary)", marginTop: 4 }}>
+            <div style={{ fontSize: 16, color: "var(--text-secondary)", marginTop: 4, fontWeight: 500 }}>
               Fique calmo — ajuda a caminho
             </div>
           </div>
@@ -675,13 +700,13 @@ function EmergenciaScreen({ user, onCancel }) {
           width: "100%",
           background: "color-mix(in oklab, var(--accent-red) 12%, var(--surface-1))",
           borderColor: "color-mix(in oklab, var(--accent-red) 40%, transparent)",
-          display: "flex", alignItems: "center", gap: 12, padding: "10px 14px",
+          display: "flex", alignItems: "center", gap: 12, padding: "12px 14px",
         }}>
-          <I.Phone style={{ width: 18, height: 18, color: "var(--accent-red)" }} />
-          <div style={{ flex: 1, fontSize: 12, color: "var(--text-secondary)" }}>
-            Equipe e recepção foram <strong style={{ color: "var(--text-primary)" }}>notificadas</strong>
+          <I.Phone style={{ width: 20, height: 20, color: "var(--accent-red)" }} />
+          <div style={{ flex: 1, fontSize: 14, color: "var(--text-secondary)", fontWeight: 500 }}>
+            Equipe <strong style={{ color: "var(--text-primary)" }}>notificada</strong>
           </div>
-          <button className="btn btn--sm btn--secondary" onClick={onCancel}>Cancelar</button>
+          <button className="btn btn--sm btn--neutral" onClick={onCancel}>Cancelar</button>
         </div>
       </div>
     </div>
@@ -708,10 +733,10 @@ function IncorretoScreen({ exercise, cue = "Flexione mais os braços", onDismiss
       <div className="page" style={{ paddingTop: 4, paddingBottom: 14, gap: 10 }}>
 
         {/* Top: warning icon + title */}
-        <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 4 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 6 }}>
           <div style={{
-            width: 56, height: 56,
-            borderRadius: 16,
+            width: 64, height: 64,
+            borderRadius: 18,
             display: "grid", placeItems: "center",
             background: "color-mix(in oklab, var(--accent-amber) 22%, var(--surface-1))",
             color: "var(--accent-amber)",
@@ -720,57 +745,67 @@ function IncorretoScreen({ exercise, cue = "Flexione mais os braços", onDismiss
           }}>
             <span style={{
               position: "absolute", inset: -8,
-              borderRadius: 18,
+              borderRadius: 20,
               border: "2px solid var(--accent-amber)",
               animation: "ring 1.8s infinite var(--ease-out)",
               opacity: 0.5,
             }} />
-            <I.AlertTriangle style={{ width: 30, height: 30 }} />
+            <I.AlertTriangle style={{ width: 34, height: 34 }} />
           </div>
           <div style={{ minWidth: 0, flex: 1 }}>
-            <div className="eyebrow" style={{ textAlign: "left", marginBottom: 4, color: "var(--accent-amber)" }}>
-              {exercise?.name || "Exercício"} · Atenção
-            </div>
             <div style={{
               fontFamily: "var(--font-display)",
               fontWeight: 800,
-              fontSize: 28,
-              letterSpacing: -0.8,
-              lineHeight: 1,
+              fontSize: 34,
+              letterSpacing: -1,
+              lineHeight: 0.95,
               color: "var(--accent-amber)",
             }}>EXECUÇÃO<br/>INCORRETA</div>
           </div>
         </div>
 
         {/* Cue card — the specific correction */}
-        <div className="card card--raised" style={{
+        <div className="card card--raised grow" style={{
           display: "flex",
-          gap: 14,
-          padding: "14px 16px",
+          gap: 16,
+          padding: "16px 18px",
           alignItems: "center",
           borderColor: "color-mix(in oklab, var(--accent-amber) 32%, transparent)",
           background: "color-mix(in oklab, var(--accent-amber) 8%, var(--surface-1))",
+          minHeight: 0,
         }}>
-          <div style={{ width: 70, height: 70, borderRadius: 12, overflow: "hidden", flexShrink: 0 }}>
+          <div style={{ width: 110, height: 110, borderRadius: 14, overflow: "hidden", flexShrink: 0 }}>
             <div className="exercise-illustration" style={{ width: "100%", height: "100%" }}>
               <img src="assets/body.png" alt={exercise?.name || "Exercício"} />
             </div>
           </div>
-          <div style={{ minWidth: 0, flex: 1 }}>
-            <div className="eyebrow" style={{ textAlign: "left", marginBottom: 4 }}>Corrija</div>
+          <div style={{ minWidth: 0, flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
             <div style={{
-              fontSize: 18,
+              fontSize: 22,
               fontWeight: 700,
-              letterSpacing: -0.2,
+              letterSpacing: -0.3,
               color: "var(--text-primary)",
-              lineHeight: 1.25,
+              lineHeight: 1.2,
             }}>{cue}</div>
+            <div style={{
+              fontSize: 13,
+              fontWeight: 700,
+              letterSpacing: 0.8,
+              textTransform: "uppercase",
+              color: "var(--accent-amber)",
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+            }}>
+              <span style={{ width: 6, height: 6, borderRadius: 999, background: "var(--accent-amber)", animation: "pulse 1.2s infinite var(--ease-in-out)" }} />
+              Retomando em 5s
+            </div>
           </div>
         </div>
 
         {/* CTA */}
-        <button className="btn btn--primary btn--xl" onClick={onDismiss} style={{ width: "100%" }}>
-          <I.Check style={{ width: 18, height: 18 }} /> Entendi
+        <button className="btn btn--primary" onClick={onDismiss} style={{ width: "100%" }}>
+          <I.Check style={{ width: 16, height: 16 }} /> Entendi
         </button>
       </div>
     </div>
