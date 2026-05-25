@@ -4,7 +4,8 @@ const { useState, useEffect, useRef, useCallback, useMemo } = React;
 const {
   LoginScreen, PrincipalScreen, FichaScreen, ExercicioScreen,
   AtividadeScreen, EncorajamentoScreen, ParabensScreen, FalhaScreen,
-  InstrutorScreen, EmergenciaScreen, IncorretoScreen
+  InstrutorScreen, EmergenciaScreen, IncorretoScreen,
+  TreinoConcluidoScreen, TreinoIncompletoScreen,
 } = Screens;
 
 /* =================================================================
@@ -21,7 +22,9 @@ const initialExercises = [
 
 const ALL_SCREENS = [
 "login", "principal", "ficha", "exercicio", "atividade",
-"encorajamento", "incorreto", "completo", "parabens", "falha", "instrutor", "emergencia"];
+"encorajamento", "incorreto", "completo", "parabens", "falha",
+"treino-concluido", "treino-incompleto",
+"instrutor", "emergencia"];
 
 
 const SCREEN_LABELS = {
@@ -35,8 +38,10 @@ const SCREEN_LABELS = {
   completo: "08 · Exercício Completo",
   parabens: "09 · Parabéns",
   falha: "10 · Falha",
-  instrutor: "11 · Instrutor",
-  emergencia: "12 · Emergência"
+  "treino-concluido":  "11 · Treino Concluído",
+  "treino-incompleto": "12 · Treino Incompleto",
+  instrutor: "13 · Instrutor",
+  emergencia: "14 · Emergência"
 };
 
 const INCORRETO_CUES = {
@@ -105,29 +110,16 @@ function App() {
   const totalSeconds = active ? active.minutes * 60 : 600;
   const isActive = screen === "atividade" || screen === "encorajamento";
   const hr = useFakeHR(isActive);
-  const [secondsLeft, setSecondsLeft] = useTimer(screen === "atividade", totalSeconds, () => {
-    // Mark exercise done + show parabens
-    setExercises((es) => es.map((e, i) => i === activeIdx ? { ...e, done: true } : e));
-    setScreen("parabens");
-  });
+  const [secondsLeft, setSecondsLeft] = useTimer(screen === "atividade", totalSeconds, null);
 
-  // Encouragement pop midway through activity
+  // Forma quality simulation — drifts naturally during activity (no auto-nav)
   useEffect(() => {
-    if (screen !== "atividade") return;
-    const half = Math.floor(totalSeconds / 2);
-    if (secondsLeft === half) setScreen("encorajamento");
-  }, [secondsLeft, screen, totalSeconds]);
-
-  // Forma quality simulation — drifts naturally during activity
-  useEffect(() => {
-    if (screen !== "atividade") { setForma("boa"); return; }
-    const seq = ["boa", "excelente", "boa", "atencao", "boa", "excelente", "atencao", "critica"];
+    if (screen !== "atividade") {setForma("boa");return;}
+    const seq = ["boa", "excelente", "boa", "atencao", "boa", "excelente", "atencao", "boa"];
     let i = 0;
     const id = setInterval(() => {
       i = (i + 1) % seq.length;
-      const next = seq[i];
-      setForma(next);
-      if (next === "critica") setScreen("incorreto");
+      setForma(seq[i]);
     }, 6500);
     return () => clearInterval(id);
   }, [screen]);
@@ -143,8 +135,32 @@ function App() {
   const onPickExercise = (i) => {setActiveIdx(i);setScreen("exercicio");};
   const onStartExercise = () => {setSecondsLeft(totalSeconds);setScreen("atividade");};
   const onTerminate = () => setScreen("falha");
+  const onConclude = () => {
+    // Mark current exercise done + go to parabens
+    setExercises((es) => es.map((e, i) => i === activeIdx ? { ...e, done: true } : e));
+    setScreen("parabens");
+  };
   const onRetry = () => {setSecondsLeft(totalSeconds);setScreen("atividade");};
   const onBackToFicha = () => setScreen("ficha");
+  const onFinishWorkout = () => {
+    const doneCount = exercises.filter((e) => e.done).length;
+    setScreen(doneCount === exercises.length ? "treino-concluido" : "treino-incompleto");
+  };
+
+  // Workout stats (mock based on done exercises)
+  const workoutStats = useMemo(() => {
+    const doneList = exercises.filter((e) => e.done);
+    // Seed mock values when navigating directly to completion screens (demo)
+    if (doneList.length === 0 && (screen === "treino-concluido" || screen === "treino-incompleto")) {
+      const allMin = exercises.reduce((s, e) => s + e.minutes, 0);
+      const dur = screen === "treino-concluido" ? allMin : Math.round(allMin * 0.55);
+      return { duration: dur, calories: Math.round(dur * 7.4), avgHr: 138 };
+    }
+    const duration = doneList.reduce((s, e) => s + e.minutes, 0);
+    const calories = Math.round(duration * 7.4); // ~7.4 kcal/min mock
+    const avgHr = doneList.length ? 132 + (doneList.length % 4) * 3 : 0;
+    return { duration, calories, avgHr };
+  }, [exercises, screen]);
 
   // Mock-time for testing / completed view: jump preview
   const viewCompletedExercise = useMemo(() => ({
@@ -167,7 +183,7 @@ function App() {
     setScreen(ALL_SCREENS[ni]);
   };
 
-  /* ─── Auto cycle for demo ─── */
+  /* ─── Auto cycle for demo (off by default) ─── */
   useEffect(() => {
     if (!tweaks.autoCycle) return;
     const id = setInterval(() => cycleScreen(1), 4500);
@@ -189,7 +205,7 @@ function App() {
       body = <PrincipalScreen user={USER} onStart={() => goto("ficha")} />;
       break;
     case "ficha":
-      body = <FichaScreen exercises={exercises} onPick={onPickExercise} onBack={() => goto("principal")} />;
+      body = <FichaScreen exercises={exercises} onPick={onPickExercise} onBack={() => goto("principal")} onFinish={onFinishWorkout} />;
       break;
     case "exercicio":
       body = <ExercicioScreen exercise={active} onStart={onStartExercise} onCancel={() => goto("ficha")} onBack={() => goto("ficha")} />;
@@ -201,7 +217,8 @@ function App() {
         secondsLeft={secondsLeft}
         totalSeconds={totalSeconds}
         forma={forma}
-        onTerminate={onTerminate} />;
+        onTerminate={onTerminate}
+        onConclude={onConclude} />;
 
       break;
     case "incorreto":
@@ -227,13 +244,28 @@ function App() {
       body = <ParabensScreen exercise={active} onBack={onBackToFicha} />;
       break;
     case "falha":
-      body = <FalhaScreen exercise={active} secondsLeft={secondsLeft} onRetry={onRetry} onBack={onBackToFicha} />;
+      body = <FalhaScreen
+        exercise={active}
+        secondsLeft={secondsLeft}
+        onRetry={onRetry}
+        onChangeExercise={onBackToFicha}
+        onFinishSession={onFinishWorkout} />;
       break;
     case "instrutor":
       body = <InstrutorScreen user={USER} onCancel={() => goto("principal")} />;
       break;
     case "emergencia":
       body = <EmergenciaScreen user={USER} onCancel={() => goto("principal")} />;
+      break;
+    case "treino-concluido":
+      body = <TreinoConcluidoScreen stats={workoutStats} onBack={() => { setExercises(initialExercises); goto("principal"); }} />;
+      break;
+    case "treino-incompleto":
+      body = <TreinoIncompletoScreen
+        stats={workoutStats}
+        done={exercises.filter((e) => e.done).length}
+        total={exercises.length}
+        onBack={() => { setExercises(initialExercises); goto("principal"); }} />;
       break;
     default:
       body = null;

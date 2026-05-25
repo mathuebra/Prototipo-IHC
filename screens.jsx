@@ -111,12 +111,6 @@ function PageHeader({ title, subtitle, onBack, center = true }) {
    1. Login (RFID)
    ================================================================= */
 function LoginScreen({ onLogin }) {
-  // Auto-advance after a few seconds to simulate scan
-  useEffect(() => {
-    const t = setTimeout(onLogin, 4200);
-    return () => clearTimeout(t);
-  }, [onLogin]);
-
   return (
     <div className="screen-wrap">
       <StatusBar status="idle" />
@@ -133,13 +127,13 @@ function LoginScreen({ onLogin }) {
           }}>S.H.A.P.E</div>
         </div>
 
-        <div className="rfid" onClick={onLogin} role="button" aria-label="Aproxime a pulseira">
+        <div className="rfid" onClick={onLogin} role="button" aria-label="Toque para entrar" style={{ cursor: "pointer" }}>
           <div className="rfid__rings" />
           <div className="rfid__core"><I.Rfid /></div>
         </div>
 
         <div style={{ textAlign: "center", color: "var(--text-secondary)", fontSize: 19, fontWeight: 600, lineHeight: 1.35, maxWidth: 360 }}>
-          Aproxime a pulseira da área indicada na recepção
+          Toque para entrar com sua pulseira
         </div>
       </div>
     </div>
@@ -249,10 +243,10 @@ function PrincipalScreen({ user, onStart }) {
 /* =================================================================
    3. Ficha — Workout list
    ================================================================= */
-function FichaScreen({ exercises, onPick, onBack }) {
+function FichaScreen({ exercises, onPick, onBack, onFinish }) {
   const done = exercises.filter(e => e.done).length;
   const total = exercises.length;
-  const totalMin = exercises.reduce((s, e) => s + e.minutes, 0);
+  const anyDone = done > 0;
 
   return (
     <div className="screen-wrap">
@@ -273,6 +267,14 @@ function FichaScreen({ exercises, onPick, onBack }) {
             </div>
           ))}
         </div>
+        {anyDone && (
+          <button
+            className="btn btn--primary"
+            onClick={onFinish}
+            style={{ width: "100%", marginTop: 10, flexShrink: 0 }}>
+            Encerrar Treino <I.ArrowRight style={{ width: 16, height: 16 }} />
+          </button>
+        )}
       </div>
     </div>
   );
@@ -340,7 +342,7 @@ function ExercicioScreen({ exercise, onStart, onCancel, onBack, completed = fals
    Usability-first: big Demonstração tile + big Terminar button.
    Timer + HR live as compact info on top.
    ================================================================= */
-function AtividadeScreen({ exercise, hr, secondsLeft, totalSeconds, forma = "boa", onTerminate }) {
+function AtividadeScreen({ exercise, hr, secondsLeft, totalSeconds, forma = "boa", onTerminate, onConclude }) {
   const [showDemo, setShowDemo] = useState(false);
   const progress = 1 - (secondsLeft / totalSeconds);
   const mm = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
@@ -441,10 +443,16 @@ function AtividadeScreen({ exercise, hr, secondsLeft, totalSeconds, forma = "boa
           </div>
         </button>
 
-        {/* Smaller terminar button */}
-        <button className="btn btn--neutral" onClick={onTerminate} style={{ alignSelf: "center" }}>
-          <I.Stop style={{ width: 16, height: 16 }} /> Terminar Treino
-        </button>
+        {/* Bottom action: changes based on timer */}
+        {secondsLeft === 0 ? (
+          <button className="btn btn--primary" onClick={onConclude} style={{ alignSelf: "center" }}>
+            <I.Check style={{ width: 16, height: 16 }} /> Concluir Exercício
+          </button>
+        ) : (
+          <button className="btn btn--neutral" onClick={onTerminate} style={{ alignSelf: "center" }}>
+            <I.Stop style={{ width: 16, height: 16 }} /> Terminar Exercício
+          </button>
+        )}
       </div>
 
       {/* Demo overlay */}
@@ -481,12 +489,6 @@ function AtividadeScreen({ exercise, hr, secondsLeft, totalSeconds, forma = "boa
    6. Encorajamento — animated motivation overlay during activity
    ================================================================= */
 function EncorajamentoScreen({ user, exercise, hr, secondsLeft, totalSeconds, onContinue }) {
-  // Auto-dismiss
-  useEffect(() => {
-    const t = setTimeout(onContinue, 3200);
-    return () => clearTimeout(t);
-  }, [onContinue]);
-
   const progress = 1 - (secondsLeft / totalSeconds);
   const mm = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
   const ss = String(secondsLeft % 60).padStart(2, "0");
@@ -494,8 +496,8 @@ function EncorajamentoScreen({ user, exercise, hr, secondsLeft, totalSeconds, on
   return (
     <div className="screen-wrap">
       <StatusBar status="active" progress={progress} />
-      <div className="page" style={{ justifyContent: "space-between", paddingTop: 8 }}>
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", gap: 14 }}>
+      <div className="page" style={{ justifyContent: "space-between", paddingTop: 6 }}>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", gap: 10 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--accent-green)" }}>
             <I.Sparkles style={{ width: 20, height: 20 }} />
             <span style={{
@@ -506,27 +508,20 @@ function EncorajamentoScreen({ user, exercise, hr, secondsLeft, totalSeconds, on
             }}>Você está indo bem</span>
             <I.Sparkles style={{ width: 20, height: 20 }} />
           </div>
-          <div className="hero hero--green" style={{ fontSize: 64, letterSpacing: -2.5 }}>
+          <div className="hero hero--green" style={{ fontSize: 56, letterSpacing: -2.5 }}>
             VOCÊ<br/>CONSEGUE
           </div>
           <div style={{
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: 800,
             letterSpacing: -0.5,
             color: "var(--text-primary)",
           }}>{user.name}</div>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-          <div className="metric" style={{ padding: "8px 12px" }}>
-            <span className="metric__label">{exercise.name}</span>
-            <span className="metric__value" style={{ fontSize: 22, color: "var(--text-primary)" }}>Ativo</span>
-          </div>
-          <div className="metric" style={{ padding: "8px 12px" }}>
-            <span className="metric__label">Restante</span>
-            <span className="metric__value metric__value--mono" style={{ fontSize: 22, color: "var(--accent-green)" }}>{mm}:{ss}</span>
-          </div>
-        </div>
+        <button className="btn btn--primary" onClick={onContinue} style={{ width: "100%" }}>
+          Continuar treino <I.ArrowRight style={{ width: 16, height: 16 }} />
+        </button>
       </div>
     </div>
   );
@@ -539,19 +534,19 @@ function ParabensScreen({ exercise, onBack }) {
   return (
     <div className="screen-wrap">
       <StatusBar status="done" />
-      <div className="page" style={{ alignItems: "center", justifyContent: "space-between", paddingTop: 8 }}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12, marginTop: 18 }}>
+      <div className="page" style={{ alignItems: "center", justifyContent: "space-between", paddingTop: 4, gap: 8 }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginTop: 4 }}>
           <div style={{
-            width: 64, height: 64,
-            borderRadius: 18,
+            width: 56, height: 56,
+            borderRadius: 16,
             display: "grid", placeItems: "center",
             background: "color-mix(in oklab, var(--accent-green) 22%, var(--surface-1))",
             color: "var(--accent-green)",
           }}>
-            <I.Trophy style={{ width: 36, height: 36 }} />
+            <I.Trophy style={{ width: 30, height: 30 }} />
           </div>
-          <div className="hero hero--green" style={{ fontSize: 52 }}>PARABÉNS</div>
-          <div className="eyebrow">{exercise.name} · Concluído</div>
+          <div className="hero hero--green" style={{ fontSize: 42 }}>PARABÉNS</div>
+          <div className="eyebrow" style={{ fontSize: 13 }}>{exercise.name} concluído</div>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, width: "100%" }}>
@@ -559,7 +554,7 @@ function ParabensScreen({ exercise, onBack }) {
           <div className="metric"><span className="metric__label">Status</span><span className="metric__value" style={{ fontSize: 22, color: "var(--accent-green)" }}>100%</span></div>
         </div>
 
-        <button className="btn btn--primary" onClick={onBack} style={{ marginTop: 6 }}>
+        <button className="btn btn--primary" onClick={onBack} style={{ width: "100%" }}>
           Voltar à Ficha <I.ChevronRight style={{ width: 14, height: 14 }} />
         </button>
       </div>
@@ -570,45 +565,111 @@ function ParabensScreen({ exercise, onBack }) {
 /* =================================================================
    9. Falha — workout incomplete
    ================================================================= */
-function FalhaScreen({ exercise, secondsLeft, onRetry, onBack }) {
+function FalhaScreen({ exercise, secondsLeft, onRetry, onChangeExercise, onFinishSession }) {
   const mm = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
   const ss = String(secondsLeft % 60).padStart(2, "0");
+  const total = exercise.minutes * 60;
+  const completed = total - secondsLeft;
+  const pct = Math.max(0, Math.min(100, Math.round((completed / total) * 100)));
+  const cMin = Math.floor(completed / 60);
+  const cSec = String(completed % 60).padStart(2, "0");
+
+  // Ring geometry
+  const R = 44;
+  const C = 2 * Math.PI * R;
+  const dash = (pct / 100) * C;
 
   return (
     <div className="screen-wrap">
       <StatusBar status="idle" pillOverride="Interrompido" />
-      <div className="page" style={{ alignItems: "center", justifyContent: "space-between", paddingTop: 8 }}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12, marginTop: 14 }}>
+      <div className="page" style={{ alignItems: "center", justifyContent: "space-between", paddingTop: 4, paddingBottom: 14, gap: 6 }}>
+
+        {/* Header row */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12, alignSelf: "stretch" }}>
           <div style={{
-            width: 64, height: 64,
-            borderRadius: 18,
+            width: 44, height: 44,
+            borderRadius: 12,
             display: "grid", placeItems: "center",
             background: "var(--surface-2)",
             color: "var(--text-secondary)",
             border: "1.5px solid var(--border-strong)",
+            flexShrink: 0,
           }}>
-            <I.Pause style={{ width: 30, height: 30 }} />
+            <I.Pause style={{ width: 22, height: 22 }} />
           </div>
-          <div className="hero-sub" style={{ fontSize: 32, color: "var(--text-primary)" }}>Treino pausado</div>
-          <div style={{ fontSize: 17, color: "var(--text-secondary)", textAlign: "center", maxWidth: 340, lineHeight: 1.4, fontWeight: 500 }}>
-            Você interrompeu <strong style={{ color: "var(--text-primary)" }}>{exercise.name}</strong>. Retome quando estiver pronto.
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="hero-sub" style={{ fontSize: 26, color: "var(--text-primary)", textAlign: "left", lineHeight: 1 }}>Treino pausado</div>
+            <div style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.3, fontWeight: 600, marginTop: 3 }}>
+              <strong style={{ color: "var(--text-primary)" }}>{exercise.name}</strong>
+            </div>
           </div>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, width: "100%" }}>
-          <div className="metric"><span className="metric__label">Restante</span><span className="metric__value metric__value--mono" style={{ fontSize: 24 }}>{mm}:{ss}</span></div>
-          <div className="metric"><span className="metric__label">Sugestão</span><span className="metric__value" style={{ fontSize: 18, color: "var(--accent-amber)" }}>Descansar</span></div>
+        {/* Big progress ring with stats */}
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "auto 1fr",
+          alignItems: "center",
+          gap: 18,
+          padding: "0 4px",
+          alignSelf: "stretch",
+        }}>
+          <div style={{ position: "relative", width: 110, height: 110 }}>
+            <svg width="110" height="110" viewBox="0 0 110 110" style={{ transform: "rotate(-90deg)" }}>
+              <circle cx="55" cy="55" r={R} fill="none" stroke="var(--surface-3)" strokeWidth="9" />
+              <circle
+                cx="55" cy="55" r={R}
+                fill="none"
+                stroke="var(--accent-amber)"
+                strokeWidth="9"
+                strokeLinecap="round"
+                strokeDasharray={`${dash} ${C}`}
+                style={{ transition: "stroke-dasharray var(--d-slow) var(--ease-out)" }}
+              />
+            </svg>
+            <div style={{
+              position: "absolute", inset: 0,
+              display: "flex", flexDirection: "column",
+              alignItems: "center", justifyContent: "center",
+              gap: 0,
+            }}>
+              <span style={{ fontFamily: "var(--font-display)", fontSize: 30, fontWeight: 800, color: "var(--accent-amber)", letterSpacing: -1, lineHeight: 1 }}>{pct}<span style={{ fontSize: 18 }}>%</span></span>
+              <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-muted)", letterSpacing: 1, textTransform: "uppercase", marginTop: 2 }}>concluído</span>
+            </div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div>
+              <div className="eyebrow" style={{ textAlign: "left", marginBottom: 4 }}>Feito</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 22, fontWeight: 700, color: "var(--text-primary)", letterSpacing: -0.5, fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+                {cMin}:{cSec}
+              </div>
+            </div>
+            <div>
+              <div className="eyebrow" style={{ textAlign: "left", marginBottom: 4 }}>Restante</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 22, fontWeight: 700, color: "var(--text-secondary)", letterSpacing: -0.5, fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+                {mm}:{ss}
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="row" style={{ width: "100%", justifyContent: "space-between", marginTop: 4 }}>
-          <button className="btn btn--secondary" onClick={onBack}>Sair</button>
-          <button className="btn btn--primary" onClick={onRetry}>
-            Tentar de novo <I.Play style={{ width: 14, height: 14 }} />
+        {/* Buttons */}
+        <div className="col" style={{ width: "100%", gap: 8, flexShrink: 0 }}>
+          <button className="btn btn--primary" onClick={onRetry} style={{ width: "100%" }}>
+            <I.Play style={{ width: 16, height: 16 }} /> Tentar de novo
           </button>
+          <div className="row" style={{ width: "100%", gap: 8 }}>
+            <button className="btn btn--neutral" onClick={onChangeExercise} style={{ flex: 1, paddingLeft: 12, paddingRight: 12 }}>
+              Trocar
+            </button>
+            <button className="btn btn--neutral" onClick={onFinishSession} style={{ flex: 1, paddingLeft: 12, paddingRight: 12 }}>
+              Encerrar
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
 
 /* =================================================================
@@ -719,11 +780,13 @@ function EmergenciaScreen({ user, onCancel }) {
    reference illustration, primary "Entendi" CTA. Auto-dismiss.
    ================================================================= */
 function IncorretoScreen({ exercise, cue = "Flexione mais os braços", onDismiss }) {
-  // Auto-dismiss after 5s
+  // Visual countdown only — does NOT auto-dismiss
+  const [countdown, setCountdown] = useState(10);
   useEffect(() => {
-    const t = setTimeout(onDismiss, 5000);
-    return () => clearTimeout(t);
-  }, [onDismiss]);
+    if (countdown <= 0) return;
+    const id = setTimeout(() => setCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(id);
+  }, [countdown]);
 
   return (
     <div className="screen-wrap" style={{
@@ -798,7 +861,7 @@ function IncorretoScreen({ exercise, cue = "Flexione mais os braços", onDismiss
               gap: 6,
             }}>
               <span style={{ width: 6, height: 6, borderRadius: 999, background: "var(--accent-amber)", animation: "pulse 1.2s infinite var(--ease-in-out)" }} />
-              Retomando em 5s
+              {countdown > 0 ? `Retomando em ${countdown}s` : "Toque \"Entendi\" para continuar"}
             </div>
           </div>
         </div>
@@ -812,9 +875,126 @@ function IncorretoScreen({ exercise, cue = "Flexione mais os braços", onDismiss
   );
 }
 
+/* =================================================================
+   13. Treino Concluído — full session, all exercises done
+   ================================================================= */
+function TreinoConcluidoScreen({ stats, onBack }) {
+  return (
+    <div className="screen-wrap" style={{
+      background: "linear-gradient(160deg, color-mix(in oklab, var(--accent-green) 14%, #000) 0%, var(--bg) 55%)",
+    }}>
+      <StatusBar status="done" pillOverride="Treino Completo" />
+      <div className="page" style={{ paddingTop: 2, gap: 10 }}>
+        <div style={{ textAlign: "center", marginTop: 4 }}>
+          <div style={{
+            fontFamily: "var(--font-display)",
+            fontWeight: 800,
+            fontSize: 38,
+            letterSpacing: -1.2,
+            lineHeight: 0.95,
+            color: "var(--accent-green)",
+          }}>TREINO<br/>CONCLUÍDO</div>
+        </div>
+
+        <div className="grow" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, minHeight: 0 }}>
+          <CompletionStat label="Calorias" value={stats.calories} unit="kcal" color="var(--accent-amber)" />
+          <CompletionStat label="BPM médio" value={stats.avgHr}    unit="bpm"  color="var(--hr-color)" />
+          <CompletionStat label="Duração"  value={stats.duration} unit="min"  color="var(--accent-green)" />
+        </div>
+
+        <button className="btn btn--primary" onClick={onBack} style={{ width: "100%" }}>
+          <I.Check style={{ width: 16, height: 16 }} /> Finalizar
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* =================================================================
+   14. Treino Incompleto — session ended with exercises unfinished
+   ================================================================= */
+function TreinoIncompletoScreen({ stats, done, total, onBack }) {
+  return (
+    <div className="screen-wrap">
+      <StatusBar status="idle" pillOverride="Treino Parcial" />
+      <div className="page" style={{ paddingTop: 2, gap: 10 }}>
+        <div style={{ textAlign: "center", marginTop: 4 }}>
+          <div style={{
+            fontFamily: "var(--font-display)",
+            fontWeight: 800,
+            fontSize: 28,
+            letterSpacing: -0.8,
+            lineHeight: 1,
+            color: "var(--accent-blue)",
+          }}>Um passo de cada vez</div>
+          <div style={{
+            fontSize: 16,
+            fontWeight: 600,
+            color: "var(--text-secondary)",
+            marginTop: 8,
+            lineHeight: 1.35,
+          }}>
+            Você concluiu <strong style={{ color: "var(--text-primary)" }}>{done} de {total}</strong> exercícios. Continue assim!
+          </div>
+        </div>
+
+        <div className="grow" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, minHeight: 0 }}>
+          <CompletionStat label="Calorias" value={stats.calories} unit="kcal" color="var(--accent-amber)" />
+          <CompletionStat label="BPM médio" value={stats.avgHr}    unit="bpm"  color="var(--hr-color)" />
+          <CompletionStat label="Duração"  value={stats.duration} unit="min"  color="var(--accent-green)" />
+        </div>
+
+        <button className="btn btn--primary" onClick={onBack} style={{ width: "100%" }}>
+          <I.Check style={{ width: 16, height: 16 }} /> Finalizar
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function CompletionStat({ label, value, unit, color }) {
+  return (
+    <div className="card" style={{
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      gap: 4,
+      padding: "12px 8px",
+      background: `color-mix(in oklab, ${color} 8%, var(--surface-1))`,
+      borderColor: `color-mix(in oklab, ${color} 28%, transparent)`,
+    }}>
+      <div style={{
+        fontSize: 12,
+        fontWeight: 700,
+        letterSpacing: 0.6,
+        textTransform: "uppercase",
+        color: "var(--text-muted)",
+        textAlign: "center",
+      }}>{label}</div>
+      <div style={{
+        fontFamily: "var(--font-display)",
+        fontWeight: 800,
+        fontSize: 42,
+        letterSpacing: -2,
+        lineHeight: 1,
+        color: color,
+      }}>{value}</div>
+      <div style={{
+        fontSize: 12,
+        fontWeight: 700,
+        color: "var(--text-muted)",
+        textTransform: "uppercase",
+        letterSpacing: 0.4,
+      }}>{unit}</div>
+    </div>
+  );
+}
+
 window.Screens = {
   LoginScreen, PrincipalScreen, FichaScreen, ExercicioScreen,
   AtividadeScreen, EncorajamentoScreen, ParabensScreen, FalhaScreen,
   InstrutorScreen, EmergenciaScreen, IncorretoScreen,
+  TreinoConcluidoScreen, TreinoIncompletoScreen,
   StatusBar, PageHeader, FormaBadge,
 };
