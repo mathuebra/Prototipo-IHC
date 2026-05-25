@@ -1,0 +1,804 @@
+/* =================================================================
+   S.H.A.P.E — Design Tokens
+   ================================================================= */
+
+:root {
+  /* Typography */
+  --font-display: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+  --font-action: "Raleway", "Inter", sans-serif;
+
+  /* Watch screen — locked to original 446×374 */
+  --screen-w: 446px;
+  --screen-h: 374px;
+  --screen-radius: 36px;
+
+  /* Surfaces — dark, OLED-friendly */
+  --bg: #000000;
+  --surface-1: #15171a;
+  --surface-2: #1f2226;
+  --surface-3: #292c31;
+  --border: rgba(255, 255, 255, 0.10);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --overlay: rgba(0, 0, 0, 0.6);
+
+  /* Text */
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.78);
+  --text-muted: rgba(255, 255, 255, 0.52);
+  --text-disabled: rgba(255, 255, 255, 0.30);
+
+  /* Accents (semantic) */
+  --accent-blue: #4A9DFF;       /* identity, welcome */
+  --accent-blue-soft: #1B3A66;
+  --accent-green: #34E47A;      /* active, success */
+  --accent-green-soft: #144B2A;
+  --accent-amber: #FFC233;      /* instructor, waiting */
+  --accent-amber-soft: #4A3A0E;
+  --accent-red: #FF5A5A;        /* danger, emergency, failure */
+  --accent-red-soft: #4D1E1E;
+
+  /* Heart rate */
+  --hr-color: #FF6B7A;
+
+  /* Motion */
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+  --d-fast: 160ms;
+  --d-med: 280ms;
+  --d-slow: 440ms;
+
+  /* Radii */
+  --r-pill: 999px;
+  --r-card: 18px;
+  --r-chip: 14px;
+  --r-sm: 8px;
+}
+
+/* Theme: Refined (default) — softer, premium feel */
+[data-theme="refined"] {
+  --accent-blue: #4A9DFF;
+  --accent-green: #34E47A;
+  --accent-amber: #FFC233;
+  --accent-red: #FF5A5A;
+}
+
+/* Theme: Original Bold — closer to the original vibrant palette */
+[data-theme="original"] {
+  --accent-blue: #489EFF;
+  --accent-green: #48FF85;
+  --accent-amber: #EEFF00;
+  --accent-red: #FF3333;
+}
+
+/* Theme: High contrast — accessibility-first */
+[data-theme="contrast"] {
+  --surface-1: #1c1f24;
+  --surface-2: #2a2e34;
+  --surface-3: #3a3f47;
+  --accent-blue: #6FB5FF;
+  --accent-green: #5BF098;
+  --accent-amber: #FFD24D;
+  --accent-red: #FF7A7A;
+  --text-secondary: rgba(255, 255, 255, 0.88);
+  --text-muted: rgba(255, 255, 255, 0.66);
+}
+
+/* =================================================================
+   Reset + base
+   ================================================================= */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--font-body);
+  background: #0a0b0d;
+  color: var(--text-primary);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+img { display: block; max-width: 100%; }
+
+/* =================================================================
+   Stage — centers + scales the watch in the viewport
+   ================================================================= */
+.stage {
+  position: fixed; inset: 0;
+  display: grid; place-items: center;
+  background:
+    radial-gradient(ellipse at 50% 30%, #1a1c20 0%, #0a0b0d 60%, #050506 100%);
+  padding: 24px;
+}
+
+/* =================================================================
+   Watch bezel
+   ================================================================= */
+.watch {
+  position: relative;
+  padding: 26px;
+  border-radius: 56px;
+  background:
+    linear-gradient(160deg, #2a2d33 0%, #15171b 50%, #0a0b0d 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.6),
+    0 30px 80px -20px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+.watch__crown,
+.watch__btn {
+  position: absolute;
+  right: -8px;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  outline: none;
+  transition: all var(--d-fast) var(--ease-out);
+}
+.watch__crown {
+  top: 30%;
+  width: 14px;
+  height: 56px;
+  transform: translateY(-50%);
+  border-radius: 4px 2px 2px 4px;
+  background: linear-gradient(90deg, #1a1c20 0%, var(--accent-red) 55%, color-mix(in oklab, var(--accent-red) 60%, #000) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset -1px 0 0 rgba(0, 0, 0, 0.4),
+    -2px 0 4px rgba(0, 0, 0, 0.6),
+    0 0 0 0 color-mix(in oklab, var(--accent-red) 50%, transparent);
+}
+.watch__btn {
+  top: 62%;
+  width: 14px;
+  height: 56px;
+  transform: translateY(-50%);
+  border-radius: 4px 2px 2px 4px;
+  background: linear-gradient(90deg, #1a1c20 0%, var(--accent-amber) 55%, color-mix(in oklab, var(--accent-amber) 60%, #000) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset -1px 0 0 rgba(0, 0, 0, 0.4),
+    -2px 0 4px rgba(0, 0, 0, 0.6),
+    0 0 0 0 color-mix(in oklab, var(--accent-amber) 50%, transparent);
+}
+.watch__crown:hover { box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), inset -1px 0 0 rgba(0,0,0,0.4), -2px 0 4px rgba(0,0,0,0.6), 0 0 16px color-mix(in oklab, var(--accent-red) 60%, transparent); }
+.watch__btn:hover   { box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), inset -1px 0 0 rgba(0,0,0,0.4), -2px 0 4px rgba(0,0,0,0.6), 0 0 16px color-mix(in oklab, var(--accent-amber) 60%, transparent); }
+.watch__crown:active,
+.watch__btn:active { transform: translateY(-50%) translateX(2px); }
+
+/* Tiny inline label that appears on hover */
+.watch__crown::after,
+.watch__btn::after {
+  content: attr(data-label);
+  position: absolute;
+  top: 50%;
+  right: 26px;
+  transform: translateY(-50%);
+  font-family: var(--font-action);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  background: var(--surface-2);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--d-fast) var(--ease-out), transform var(--d-fast) var(--ease-out);
+  white-space: nowrap;
+}
+.watch__crown::after { color: var(--accent-red); border-color: color-mix(in oklab, var(--accent-red) 50%, transparent); }
+.watch__btn::after   { color: var(--accent-amber); border-color: color-mix(in oklab, var(--accent-amber) 50%, transparent); }
+.watch__crown:hover::after,
+.watch__btn:hover::after { opacity: 1; transform: translateY(-50%) translateX(-4px); }
+.watch__strap-top, .watch__strap-bot {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  width: 240px; height: 24px;
+  background: linear-gradient(180deg, #1a1c20 0%, #0a0b0d 100%);
+  border-radius: 0 0 12px 12px;
+}
+.watch__strap-top { top: -24px; border-radius: 12px 12px 0 0; }
+.watch__strap-bot { bottom: -24px; }
+
+.watch[data-frame="off"] {
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  border-radius: var(--screen-radius);
+}
+.watch[data-frame="off"] .watch__crown,
+.watch[data-frame="off"] .watch__btn,
+.watch[data-frame="off"] .watch__strap-top,
+.watch[data-frame="off"] .watch__strap-bot { display: none; }
+
+/* =================================================================
+   Screen — the 446×374 canvas
+   ================================================================= */
+.screen {
+  position: relative;
+  width: var(--screen-w);
+  height: var(--screen-h);
+  background: var(--bg);
+  border-radius: var(--screen-radius);
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    inset 0 0 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Subtle vignette to simulate OLED bevel */
+.screen::after {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.35) 100%);
+}
+
+/* =================================================================
+   Status bar (consistent across all screens)
+   ================================================================= */
+.statusbar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 44px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 10;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  color: var(--text-primary);
+}
+
+.statusbar__left,
+.statusbar__right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 64px;
+}
+.statusbar__right { justify-content: flex-end; }
+
+.statusbar__center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+/* Context pill (replaces the raw colored line) */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  padding: 0 10px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background: var(--surface-2);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  transition: all var(--d-med) var(--ease-out);
+}
+.status-pill__dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+.status-pill--idle   { color: var(--accent-blue);  background: color-mix(in oklab, var(--accent-blue)  18%, var(--surface-1)); border-color: color-mix(in oklab, var(--accent-blue)  36%, transparent); }
+.status-pill--active { color: var(--accent-green); background: color-mix(in oklab, var(--accent-green) 18%, var(--surface-1)); border-color: color-mix(in oklab, var(--accent-green) 36%, transparent); }
+.status-pill--wait   { color: var(--accent-amber); background: color-mix(in oklab, var(--accent-amber) 18%, var(--surface-1)); border-color: color-mix(in oklab, var(--accent-amber) 36%, transparent); }
+.status-pill--alert  { color: var(--accent-red);   background: color-mix(in oklab, var(--accent-red)   18%, var(--surface-1)); border-color: color-mix(in oklab, var(--accent-red)   36%, transparent); }
+.status-pill--done   { color: var(--accent-green); background: color-mix(in oklab, var(--accent-green) 18%, var(--surface-1)); border-color: color-mix(in oklab, var(--accent-green) 36%, transparent); }
+.status-pill--alert .status-pill__dot { animation: pulse 1s infinite var(--ease-in-out); }
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.5; transform: scale(1.4); }
+}
+
+/* Battery */
+.battery {
+  position: relative;
+  width: 24px; height: 12px;
+  border: 1.5px solid var(--text-primary);
+  border-radius: 3px;
+  opacity: 0.85;
+}
+.battery::after {
+  content: "";
+  position: absolute;
+  right: -3px; top: 3px;
+  width: 2px; height: 4px;
+  background: var(--text-primary);
+  border-radius: 0 1px 1px 0;
+}
+.battery__fill {
+  position: absolute; inset: 1.5px;
+  background: var(--text-primary);
+  border-radius: 1px;
+  width: calc(100% - 3px);
+}
+
+/* HR mini display in status bar */
+.statusbar__hr {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--hr-color);
+  font-size: 14px;
+  font-weight: 700;
+}
+.statusbar__hr svg { width: 16px; height: 16px; }
+.statusbar__hr svg path { animation: heartbeat 1.1s infinite var(--ease-in-out); }
+@keyframes heartbeat {
+  0%, 70%, 100% { transform: scale(1); }
+  20%           { transform: scale(1.15); }
+  40%           { transform: scale(1); }
+}
+
+/* =================================================================
+   Page chrome — header (title + back)
+   ================================================================= */
+.page {
+  position: absolute;
+  inset: 44px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0 24px 18px;
+}
+
+.page__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0 14px;
+}
+.page__back {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  transition: all var(--d-fast) var(--ease-out);
+  flex-shrink: 0;
+}
+.page__back:hover  { background: var(--surface-3); transform: translateX(-2px); }
+.page__back:active { transform: translateX(-2px) scale(.95); }
+.page__back svg    { width: 18px; height: 18px; }
+
+.page__title {
+  flex: 1;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 26px;
+  line-height: 1.1;
+  letter-spacing: -0.6px;
+  color: var(--text-primary);
+}
+.page__title--center { text-align: center; padding-right: 42px; /* balance back btn */ }
+.page__subtitle {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* =================================================================
+   Buttons
+   ================================================================= */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 50px;
+  padding: 0 24px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-action);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  cursor: pointer;
+  user-select: none;
+  transition: all var(--d-fast) var(--ease-out);
+  border: 1.5px solid transparent;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.btn::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: rgba(255, 255, 255, 0);
+  transition: background var(--d-fast);
+  pointer-events: none;
+}
+.btn:hover::after  { background: rgba(255, 255, 255, 0.06); }
+.btn:active::after { background: rgba(255, 255, 255, 0.12); }
+.btn:active        { transform: scale(0.97); }
+
+.btn--primary {
+  background: var(--accent-green);
+  color: #00200E;
+  box-shadow: 0 6px 20px -8px var(--accent-green);
+}
+.btn--secondary {
+  background: var(--surface-2);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+.btn--ghost {
+  background: transparent;
+  color: var(--accent-green);
+  border-color: var(--accent-green);
+}
+.btn--danger {
+  background: color-mix(in oklab, var(--accent-red) 16%, var(--surface-1));
+  color: var(--accent-red);
+  border-color: color-mix(in oklab, var(--accent-red) 60%, transparent);
+}
+.btn--danger-solid {
+  background: var(--accent-red);
+  color: #2A0000;
+  box-shadow: 0 6px 20px -8px var(--accent-red);
+}
+
+.btn--sm { min-height: 40px; padding: 0 18px; font-size: 13px; }
+.btn--icon { padding: 0; width: 50px; min-height: 50px; }
+.btn--xl  { min-height: 64px; padding: 0 28px; font-size: 17px; gap: 12px; }
+
+/* Big circular action (emergency / instructor) */
+.action-pad {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  border: 2px solid var(--border-strong);
+  background: var(--surface-2);
+  cursor: pointer;
+  transition: all var(--d-fast) var(--ease-out);
+  position: relative;
+}
+.action-pad:active { transform: scale(.94); }
+.action-pad svg { width: 32px; height: 32px; }
+.action-pad__label {
+  position: absolute;
+  bottom: -22px;
+  left: 50%; transform: translateX(-50%);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.action-pad--danger { border-color: var(--accent-red); color: var(--accent-red); }
+.action-pad--danger:hover { background: color-mix(in oklab, var(--accent-red) 20%, var(--surface-2)); }
+.action-pad--amber  { border-color: var(--accent-amber); color: var(--accent-amber); }
+.action-pad--amber:hover  { background: color-mix(in oklab, var(--accent-amber) 20%, var(--surface-2)); }
+
+/* =================================================================
+   Cards / list items
+   ================================================================= */
+.card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  padding: 14px 16px;
+}
+.card--raised {
+  background: var(--surface-2);
+  box-shadow: 0 4px 16px -8px rgba(0, 0, 0, 0.5);
+}
+
+.list-row {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px 10px 12px;
+  border-radius: var(--r-chip);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all var(--d-fast) var(--ease-out);
+}
+.list-row:hover { background: var(--surface-2); border-color: var(--border-strong); }
+.list-row--done { background: color-mix(in oklab, var(--accent-green) 8%, var(--surface-1)); border-color: color-mix(in oklab, var(--accent-green) 28%, transparent); }
+.list-row--active { background: color-mix(in oklab, var(--accent-blue)  10%, var(--surface-1)); border-color: color-mix(in oklab, var(--accent-blue)  36%, transparent); }
+
+.list-row__time {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+.list-row__name {
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+}
+
+/* =================================================================
+   Checkbox
+   ================================================================= */
+.check {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border-strong);
+  background: var(--surface-2);
+  display: grid; place-items: center;
+  transition: all var(--d-fast) var(--ease-out);
+  flex-shrink: 0;
+}
+.check svg { width: 16px; height: 16px; opacity: 0; transform: scale(.6); transition: all var(--d-fast) var(--ease-out); color: #00200E; }
+.check--done {
+  background: var(--accent-green);
+  border-color: var(--accent-green);
+}
+.check--done svg { opacity: 1; transform: scale(1); }
+
+/* =================================================================
+   Big metric display (heart rate, timer)
+   ================================================================= */
+.metric {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.metric__label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.metric__value {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: -1px;
+  color: var(--text-primary);
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.metric__value--mono { font-family: var(--font-mono); font-weight: 700; }
+.metric__unit {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.metric--hr .metric__value { color: var(--hr-color); }
+.metric--timer .metric__value { color: var(--accent-green); }
+
+/* Progress arc (svg) */
+.progress-arc { transform: rotate(-90deg); }
+.progress-arc__track { stroke: var(--surface-3); }
+.progress-arc__fill  { stroke: var(--accent-green); transition: stroke-dashoffset var(--d-slow) var(--ease-out); }
+
+/* Linear progress in status bar */
+.progress-line {
+  position: relative;
+  height: 4px;
+  width: 220px;
+  border-radius: 999px;
+  background: var(--surface-3);
+  overflow: hidden;
+}
+.progress-line__fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: var(--accent-green);
+  border-radius: inherit;
+  transition: width var(--d-slow) var(--ease-out);
+}
+
+/* =================================================================
+   Big hero text (welcome, encouragement, etc.)
+   ================================================================= */
+.hero {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 56px;
+  line-height: 0.95;
+  letter-spacing: -2px;
+  text-align: center;
+}
+.hero--blue { color: var(--accent-blue); }
+.hero--green { color: var(--accent-green); }
+.hero--red { color: var(--accent-red); }
+.hero--amber { color: var(--accent-amber); }
+
+.hero-sub {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 32px;
+  letter-spacing: -0.8px;
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* =================================================================
+   RFID scan animation
+   ================================================================= */
+.rfid {
+  position: relative;
+  width: 132px; height: 132px;
+  display: grid; place-items: center;
+}
+.rfid__rings {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+}
+.rfid__rings::before,
+.rfid__rings::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid var(--accent-blue);
+  animation: ring 2s infinite var(--ease-out);
+  opacity: 0;
+}
+.rfid__rings::before { width: 60%; height: 60%; }
+.rfid__rings::after  { width: 60%; height: 60%; animation-delay: 1s; }
+@keyframes ring {
+  0%   { width: 30%; height: 30%; opacity: 0.9; }
+  100% { width: 110%; height: 110%; opacity: 0; }
+}
+.rfid__core {
+  width: 56%; height: 56%;
+  border-radius: 50%;
+  background: linear-gradient(160deg, var(--accent-blue) 0%, color-mix(in oklab, var(--accent-blue) 50%, #000) 100%);
+  display: grid; place-items: center;
+  box-shadow:
+    0 0 30px color-mix(in oklab, var(--accent-blue) 50%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.rfid__core svg { width: 40px; height: 40px; color: white; }
+
+/* =================================================================
+   Screen transitions
+   ================================================================= */
+.screen-wrap {
+  position: absolute; inset: 0;
+  animation: fadeIn var(--d-med) var(--ease-out);
+}
+@keyframes fadeIn {
+  from { opacity: 0.4; transform: scale(0.985); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* =================================================================
+   Toast
+   ================================================================= */
+.toast {
+  position: absolute;
+  bottom: 14px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-pill);
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  animation: toastIn var(--d-med) var(--ease-out);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* =================================================================
+   Scroll
+   ================================================================= */
+.scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-3) transparent;
+  padding-right: 4px;
+}
+.scroll::-webkit-scrollbar { width: 4px; }
+.scroll::-webkit-scrollbar-track { background: transparent; }
+.scroll::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 999px; }
+
+/* =================================================================
+   Exercise illustration tile
+   ================================================================= */
+.exercise-illustration {
+  position: relative;
+  border-radius: var(--r-card);
+  background: linear-gradient(180deg, #ffffff 0%, #f0f0f3 100%);
+  overflow: hidden;
+}
+.exercise-illustration img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+/* =================================================================
+   Misc
+   ================================================================= */
+.grow { flex: 1; }
+.row { display: flex; gap: 10px; }
+.col { display: flex; flex-direction: column; gap: 10px; }
+.center { display: grid; place-items: center; }
+
+.cycle-arrow {
+  position: fixed;
+  top: 50%; transform: translateY(-50%);
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.16);
+  display: grid; place-items: center;
+  color: white;
+  cursor: pointer;
+  transition: all var(--d-fast) var(--ease-out);
+  backdrop-filter: blur(8px);
+  z-index: 30;
+}
+.cycle-arrow:hover { background: rgba(255,255,255,0.16); }
+.cycle-arrow svg { width: 18px; height: 18px; }
+.cycle-arrow--left { left: 16px; }
+.cycle-arrow--right { right: 16px; }
+
+.screen-label {
+  position: fixed;
+  bottom: 16px; left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.4px;
+  z-index: 20;
+  text-transform: uppercase;
+  pointer-events: none;
+}
